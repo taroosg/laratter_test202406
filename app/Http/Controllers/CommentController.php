@@ -68,7 +68,7 @@ class CommentController extends Controller
 
     $comment->update($request->only('comment'));
 
-    return redirect()->route('tweets.show', $tweet);
+    return redirect()->route('tweets.comments.show', [$tweet, $comment]);
   }
 
   /**
