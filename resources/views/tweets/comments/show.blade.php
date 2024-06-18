@@ -19,7 +19,7 @@
             <p>コメント作成日時: {{ $comment->created_at->format('Y-m-d H:i') }}</p>
             <p>コメント更新日時: {{ $comment->updated_at->format('Y-m-d H:i') }}</p>
           </div>
-          @if (auth()->id() == $tweet->user_id)
+          @if (auth()->id() === $comment->user_id)
           <div class="flex mt-4">
             <a href="{{ route('tweets.comments.edit', [$tweet, $comment]) }}" class="text-blue-500 hover:text-blue-700 mr-2">編集</a>
             <form action="{{ route('tweets.comments.destroy', [$tweet, $comment]) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
