@@ -51,7 +51,7 @@
             @foreach ($tweet->comments as $comment)
             <!-- 🔽 リンク追加 -->
             <a href="{{ route('tweets.comments.show', [$tweet, $comment]) }}">
-              <p>{{ $comment->comment }} {{ $comment->user->name }} {{ $comment->created_at->format('Y-m-d H:i') }}</p>
+              <p>{{ $comment->comment }} <span class="text-gray-600 dark:text-gray-400 text-sm">{{ $comment->user->name }} {{ $comment->created_at->format('Y-m-d H:i') }}</span></p>
             </a>
             @endforeach
           </div>
