@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
 use App\Models\Tweet;
-use Illuminate\Http\Request;
+use App\Services\CommentService;
+use Illuminate\Support\Facades\Gate;
 
 class CommentController extends Controller
 {
+  protected $commentService;
+
+  public function __construct(CommentService $commentService)
+  {
+    $this->commentService = $commentService;
+  }
   /**
    * Display a listing of the resource.
    */
@@ -21,23 +30,17 @@ class CommentController extends Controller
    */
   public function create(Tweet $tweet)
   {
+    Gate::authorize('create', Comment::class);
     return view('tweets.comments.create', compact('tweet'));
   }
 
   /**
    * Store a newly created resource in storage.
    */
-  public function store(Request $request, Tweet $tweet)
+  public function store(StoreCommentRequest $request, Tweet $tweet)
   {
-    $request->validate([
-      'comment' => 'required|string|max:255',
-    ]);
-
-    $tweet->comments()->create([
-      'comment' => $request->comment,
-      'user_id' => auth()->id(),
-    ]);
-
+    Gate::authorize('create', Comment::class);
+    $this->commentService->createComment($request, $tweet);
     return redirect()->route('tweets.show', $tweet);
   }
 
@@ -60,14 +63,10 @@ class CommentController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, Tweet $tweet, Comment $comment)
+  public function update(UpdateCommentRequest $request, Tweet $tweet, Comment $comment)
   {
-    $request->validate([
-      'comment' => 'required|string|max:255',
-    ]);
-
-    $comment->update($request->only('comment'));
-
+    Gate::authorize('update', $comment);
+    $this->commentService->updateComment($request, $comment);
     return redirect()->route('tweets.comments.show', [$tweet, $comment]);
   }
 
@@ -76,8 +75,8 @@ class CommentController extends Controller
    */
   public function destroy(Tweet $tweet, Comment $comment)
   {
-    $comment->delete();
-
+    Gate::authorize('delete', $comment);
+    $this->commentService->deleteComment($comment);
     return redirect()->route('tweets.show', $tweet);
   }
 }
