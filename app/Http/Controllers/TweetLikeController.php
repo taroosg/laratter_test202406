@@ -4,9 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Tweet;
 use Illuminate\Http\Request;
+use App\Services\TweetLikeService;
 
 class TweetLikeController extends Controller
 {
+
+  protected $tweetLikeService;
+
+  public function __construct(TweetLikeService $tweetLikeService)
+  {
+    $this->tweetLikeService = $tweetLikeService;
+  }
+
   /**
    * Display a listing of the resource.
    */
@@ -28,7 +37,7 @@ class TweetLikeController extends Controller
    */
   public function store(Tweet $tweet)
   {
-    $tweet->liked()->attach(auth()->id());
+    $this->tweetLikeService->likeTweet($tweet, auth()->user());
     return back();
   }
 
@@ -61,7 +70,7 @@ class TweetLikeController extends Controller
    */
   public function destroy(Tweet $tweet)
   {
-    $tweet->liked()->detach(auth()->id());
+    $this->tweetLikeService->dislikeTweet($tweet, auth()->user());
     return back();
   }
 }
