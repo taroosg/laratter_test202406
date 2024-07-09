@@ -92,3 +92,31 @@ it('allows a user to delete their comment', function () {
     'id' => $comment->id,
   ]);
 });
+
+// 更新のテスト（他のユーザのコメントが更新できないことを確認）
+it('does not allow unauthorized users to update a comment', function () {
+  $owner = User::factory()->create();
+  $otherUser = User::factory()->create();
+  $tweet = Tweet::factory()->create(['user_id' => $owner->id]);
+  $comment = Comment::factory()->create(['tweet_id' => $tweet->id, 'user_id' => $owner->id]);
+
+  $this->actingAs($otherUser);
+
+  $response = $this->put("/tweets/{$tweet->id}/comments/{$comment->id}", ['comment' => 'Updated comment']);
+
+  $response->assertStatus(403); // Forbidden
+});
+
+// 削除のテスト（他のユーザのコメントが削除できないことを確認）
+it('does not allow unauthorized users to delete a comment', function () {
+  $owner = User::factory()->create();
+  $otherUser = User::factory()->create();
+  $tweet = Tweet::factory()->create(['user_id' => $owner->id]);
+  $comment = Comment::factory()->create(['tweet_id' => $tweet->id, 'user_id' => $owner->id]);
+
+  $this->actingAs($otherUser);
+
+  $response = $this->delete("/tweets/{$tweet->id}/comments/{$comment->id}");
+
+  $response->assertStatus(403); // Forbidden
+});
