@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateTweetRequest;
 use App\Models\Tweet;
 use Illuminate\Http\Request;
 use App\Services\TweetService;
+use Illuminate\Support\Facades\Gate;
 
 class TweetController extends Controller
 {
@@ -21,6 +22,8 @@ class TweetController extends Controller
    */
   public function index()
   {
+    Gate::authorize('viewAny', Tweet::class);
+
     $tweets = $this->tweetService->allTweets();
     return view('tweets.index', compact('tweets'));
   }
@@ -30,6 +33,7 @@ class TweetController extends Controller
    */
   public function create()
   {
+    Gate::authorize('create', Tweet::class);
     return view('tweets.create');
   }
 
@@ -38,6 +42,7 @@ class TweetController extends Controller
    */
   public function store(StoreTweetRequest $request)
   {
+    Gate::authorize('create', Tweet::class);
     $this->tweetService->createTweet($request->only('tweet'), $request->user());
 
     return redirect()->route('tweets.index');
@@ -48,6 +53,7 @@ class TweetController extends Controller
    */
   public function show(Tweet $tweet)
   {
+    Gate::authorize('view', $tweet);
     $tweet->load('comments.user');
     return view('tweets.show', compact('tweet'));
   }
@@ -57,6 +63,7 @@ class TweetController extends Controller
    */
   public function edit(Tweet $tweet)
   {
+    Gate::authorize('update', $tweet);
     return view('tweets.edit', compact('tweet'));
   }
 
@@ -65,6 +72,7 @@ class TweetController extends Controller
    */
   public function update(UpdateTweetRequest $request, Tweet $tweet)
   {
+    Gate::authorize('update', $tweet);
     $updatedTweet = $this->tweetService->updateTweet($tweet, $request->only('tweet'));
 
     return redirect()->route('tweets.show', $updatedTweet);
@@ -75,6 +83,7 @@ class TweetController extends Controller
    */
   public function destroy(Tweet $tweet)
   {
+    Gate::authorize('delete', $tweet);
     $this->tweetService->deleteTweet($tweet);
 
     return redirect()->route('tweets.index');
