@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTweetRequest;
+use App\Http\Requests\UpdateTweetRequest;
 use App\Models\Tweet;
 use Illuminate\Http\Request;
 use App\Services\TweetService;
@@ -34,12 +36,8 @@ class TweetController extends Controller
   /**
    * Store a newly created resource in storage.
    */
-  public function store(Request $request)
+  public function store(StoreTweetRequest $request)
   {
-    $request->validate([
-      'tweet' => 'required|max:255',
-    ]);
-
     $this->tweetService->createTweet($request->only('tweet'), $request->user());
 
     return redirect()->route('tweets.index');
@@ -65,12 +63,8 @@ class TweetController extends Controller
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, Tweet $tweet)
+  public function update(UpdateTweetRequest $request, Tweet $tweet)
   {
-    $request->validate([
-      'tweet' => 'required|max:255',
-    ]);
-
     $updatedTweet = $this->tweetService->updateTweet($tweet, $request->only('tweet'));
 
     return redirect()->route('tweets.show', $updatedTweet);
