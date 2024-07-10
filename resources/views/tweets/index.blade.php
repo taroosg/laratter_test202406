@@ -30,6 +30,7 @@
               </form>
               @endif
             </div>
+            <p class="text-gray-600 dark:text-gray-400 ml-4">comment {{ $tweet->comments->count() }}</p>
 
           </div>
           @endforeach
