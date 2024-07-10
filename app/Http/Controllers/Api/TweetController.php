@@ -35,7 +35,7 @@ class TweetController extends Controller
   public function store(StoreTweetRequest $request)
   {
     Gate::authorize('create', Tweet::class);
-    $tweet = $this->tweetService->createTweet($request->only('tweet'), $request->user());
+    $tweet = $this->tweetService->createTweet($request);
     return response()->json($tweet, 201);
   }
 
@@ -54,7 +54,7 @@ class TweetController extends Controller
   public function update(UpdateTweetRequest $request, Tweet $tweet)
   {
     Gate::authorize('update', $tweet);
-    $updatedTweet = $this->tweetService->updateTweet($tweet, $request->all());
+    $updatedTweet = $this->tweetService->updateTweet($request, $tweet);
 
     return response()->json($tweet);
   }

@@ -3,14 +3,17 @@
 use App\Models\User;
 use App\Models\Tweet;
 use App\Services\TweetService;
+use Illuminate\Http\Request;
 
 // 作成のテスト
 it('creates a new tweet', function () {
   $user = User::factory()->create();
   $tweetService = new TweetService();
   $tweetData = ['tweet' => 'Test tweet'];
+  $request = new Request($tweetData);
+  $request->setUserResolver(fn () => $user);
 
-  $tweet = $tweetService->createTweet($tweetData, $user);
+  $tweet = $tweetService->createTweet($request);
 
   expect($tweet)->toBeInstanceOf(Tweet::class);
   expect($tweet->tweet)->toEqual('Test tweet');
@@ -32,7 +35,10 @@ it('updates a tweet', function () {
   $tweetService = new TweetService();
   $updatedData = ['tweet' => 'Updated tweet'];
 
-  $updatedTweet = $tweetService->updateTweet($tweet, $updatedData);
+  $request = new Request($updatedData);
+  $request->setUserResolver(fn () => $tweet->user);
+
+  $updatedTweet = $tweetService->updateTweet($request, $tweet);
 
   expect($updatedTweet->tweet)->toEqual('Updated tweet');
 });

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Tweet;
+use Illuminate\Http\Request;
 
 class TweetService
 {
@@ -14,9 +15,9 @@ class TweetService
     //
   }
 
-  public function createTweet($data, $user)
+  public function createTweet(Request $request)
   {
-    return $user->tweets()->create($data);
+    return $request->user()->tweets()->create($request->only('tweet'));
   }
 
   public function allTweets()
@@ -24,9 +25,9 @@ class TweetService
     return Tweet::with('user')->latest()->get();
   }
 
-  public function updateTweet(Tweet $tweet, $data)
+  public function updateTweet(Request $request, Tweet $tweet)
   {
-    $tweet->update($data);
+    $tweet->update($request->only('tweet'));
     return $tweet;
   }
 

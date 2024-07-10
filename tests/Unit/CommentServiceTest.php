@@ -5,7 +5,6 @@ use App\Models\Tweet;
 use App\Models\Comment;
 use App\Services\CommentService;
 use Illuminate\Http\Request;
-use Mockery as m;
 
 // コメント作成のテスト
 it('creates a new comment', function () {
@@ -14,11 +13,9 @@ it('creates a new comment', function () {
   $commentService = new CommentService();
   $commentData = ['comment' => 'Test comment'];
 
-  // Requestオブジェクトをモックする
-  $request = m::mock(Request::class);
-  $request->shouldReceive('all')->andReturn($commentData);
-  $request->shouldReceive('comment')->andReturn('Test comment');
-  $request->shouldReceive('user')->andReturn((object)['id' => $user->id]);
+  // Requestの作成
+  $request = new Request($commentData);
+  $request->setUserResolver(fn () => $user);
 
   $comment = $commentService->createComment($request, $tweet);
 
@@ -45,9 +42,8 @@ it('updates a comment', function () {
   $commentService = new CommentService();
   $updatedData = ['comment' => 'Updated comment'];
 
-  // Requestオブジェクトをモックする
-  $request = m::mock(Request::class);
-  $request->shouldReceive('only')->with('comment')->andReturn(['comment' => 'Updated comment']);
+  $request = new Request($updatedData);
+  $request->setUserResolver(fn () => $comment->user);
 
   $updatedComment = $commentService->updateComment($request, $comment);
 

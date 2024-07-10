@@ -43,7 +43,7 @@ class TweetController extends Controller
   public function store(StoreTweetRequest $request)
   {
     Gate::authorize('create', Tweet::class);
-    $this->tweetService->createTweet($request->only('tweet'), $request->user());
+    $this->tweetService->createTweet($request);
 
     return redirect()->route('tweets.index');
   }
@@ -73,7 +73,7 @@ class TweetController extends Controller
   public function update(UpdateTweetRequest $request, Tweet $tweet)
   {
     Gate::authorize('update', $tweet);
-    $updatedTweet = $this->tweetService->updateTweet($tweet, $request->only('tweet'));
+    $updatedTweet = $this->tweetService->updateTweet($request, $tweet);
 
     return redirect()->route('tweets.show', $updatedTweet);
   }
