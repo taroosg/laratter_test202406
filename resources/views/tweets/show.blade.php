@@ -43,7 +43,8 @@
             @endif
           </div>
           <!-- 🔽 追加 -->
-          <div class="flex mt-4">
+          <div class="mt-4">
+            <p class="text-gray-600 dark:text-gray-400 ml-4">comment {{ $tweet->comments->count() }}</p>
             <a href="{{ route('tweets.comments.create', $tweet) }}" class="text-blue-500 hover:text-blue-700 mr-2">コメントする</a>
           </div>
           <!-- 🔽 追加 -->
